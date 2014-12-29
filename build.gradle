@@ -1,0 +1,79 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+apply plugin: 'scala'
+apply plugin: 'forge'
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+
+      def prop = new Properties()
+      prop.load(it)
+      ext.config = new ConfigSlurper().parse prop
+}
+ 
+version = "${config.minecraft_version}-${config.ingressmod_major}.${config.ingressmod_minor}.${config.ingressmod_build}"
+
+minecraft {
+
+        version = config.minecraft_version + "-" + config.forge_version
+        runDir = "run"
+                replace "@VERSION@", project.version
+                replaceIn "lib/Constants.scala"
+                    if (project.hasProperty("signatureingressmod"))
+                       replace "@FINGERPRINT@", signature
+}
+
+processResources {
+
+        inputs.property "version", project.version
+        inputs.property "mcversion", project.minecraft.version
+
+        from(sourceSets.main.resources.srcDirs) {
+            include 'mcmod.info'
+            expand 'version': project.version, 'mcversion': project.minecraft.version
+        }
+
+        from(sourceSets.main.resources.srcDirs) {
+            exclude 'mcmod.info'
+        }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    appendix = 'src'
+}
+
+task deobfJar(type: Jar) {
+        from sourceSets.main.output
+        appendix = 'deobf'
+}
+
+task incrementBuildNumber() {
+        dependsOn "reobf"
+        doLast {
+                config.ingressmod_build = (config.ingressmod_build.toString().toInteger()) + 1
+
+                configFile.withWriter {
+                                config.toProperties().store(it, "")
+                }
+    }
+}
+
+jar {
+        appendix = 'universal'
+}
