@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ingressmod",
+  "name": "Ingress Mod",
+  "description": "Minecraft Mod based on Ingress by Google inc.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Martijn Woudstra"],
+  "credits": "Google Inc.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
