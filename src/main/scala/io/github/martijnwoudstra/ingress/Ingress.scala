@@ -15,13 +15,11 @@ object Ingress {
 
   @Mod.EventHandler
   def preInit(event: FMLPreInitializationEvent): Unit = {
-
     addBlocksAndItems()
   }
 
   @Mod.EventHandler
   def init(event: FMLInitializationEvent): Unit = {
-
     GameRegistry.registerWorldGenerator(WorldGeneratorIngress, 1)
   }
 
